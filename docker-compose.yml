@@ -1,87 +1,46 @@
+x-bake:
+  no-cache: false
 services:
-  # =====================================================
-  # Front-end
-  # 현재는 Vite / React 구조 미정이라 주석 처리
-  # 나중에 Front-end Dockerfile 준비되면 주석 해제
-  # =====================================================
-  # front-end:
-  #   build:
-  #     context: https://github.com/Main-Main-Project/Front-end.git#test
-  #     dockerfile: Dockerfile
-  #   container_name: main-front-end
-  #   ports:
-  #     - "5173:5173"
-  #   environment:
-  #     - VITE_API_BASE_URL=http://localhost:8000
-  #   depends_on:
-  #     - back-end
-  #   restart: unless-stopped
-  #   networks:
-  #     - main-network
-
-  # =====================================================
-  # Back-end
-  # 현재는 test 브랜치 기준으로 실제 구동 테스트
-  # =====================================================
   back-end:
     build:
-      context: "https://github.com/Main-Main-Project/Back-end.git#test"
+      context: https://github.com/Main-Main-Project/Back-end.git#test
       dockerfile: Dockerfile
-    container_name: main-back-end
+    container_name: back-end
     ports:
       - "8000:8000"
-    env_file:
-      - ./.env
     volumes:
-      - backend_logs:/app/logging
-      - backend_uploads:/app/uploads
+      - ./fonts:/fonts
     depends_on:
-      postgres:
-        condition: service_healthy
-      ollama:
-        condition: service_started
+      - postgres
+      - ollama
     restart: unless-stopped
     networks:
       - main-network
 
-  # =====================================================
-  # PostgreSQL
-  # 실제 DB 컨테이너
-  # =====================================================
   postgres:
     image: postgres:16
-    container_name: main-postgres
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: service_db
     ports:
       - "5432:5432"
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
     networks:
       - main-network
 
-  # =====================================================
-  # Ollama
-  # 실제 LLM 실행 컨테이너
-  # =====================================================
   ollama:
-    image: ollama/ollama:latest
-    container_name: main-ollama
+    image: ollama/ollama
+    container_name: ollama
     ports:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
-    restart: unless-stopped
     networks:
       - main-network
+
 
   # =====================================================
   # Grafana
