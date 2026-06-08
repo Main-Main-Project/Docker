@@ -18,7 +18,7 @@ services:
   
   back-end:
     build:
-      context: https://github.com/Main-Main-Project/Back-end.git#test
+      context: https://github.com/Main-Main-Project/Back-end.git#develop
       dockerfile: Dockerfile
     container_name: back-end
     ports:
@@ -28,6 +28,7 @@ services:
     depends_on:
       - postgres
       - ollama
+    env_file: ./back-end/.env
     restart: unless-stopped
     networks:
       - main-network
