@@ -18,7 +18,7 @@ services:
   
   back-end:
     build:
-      context: /Users/imgeonpyo/Desktop/vscode 엔지니어/RAG_main_project/Back-end
+      context: https://github.com/Main-Main-Project/Back-end.git#develop
       dockerfile: Dockerfile
     container_name: back-end
     ports:
