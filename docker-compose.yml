@@ -18,7 +18,7 @@ services:
   
   back-end:
     build:
-      context: https://github.com/Main-Main-Project/Back-end.git#develop
+      context: /Users/imgeonpyo/Desktop/vscode 엔지니어/RAG_main_project/Back-end
       dockerfile: Dockerfile
     container_name: back-end
     ports:
@@ -73,7 +73,7 @@ services:
     entrypoint: >
       sh -c "
         sleep 5 &&
-        ollama create law-qwen-7b -f /models/Modelfile
+        ollama create law-exaone-7.8b-q6 -f /models/Modelfile
       "
     networks:
       - main-network
